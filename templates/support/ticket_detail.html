@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ ticket.ticket_number }} — Service Desk{% endblock %}
+
+{% block content %}
+<section>
+  <a href="{% url 'support:ticket_list' %}" class="back-link">&larr; К списку обращений</a>
+
+  <div class="detail-grid">
+    <div>
+      <article class="card {% if ticket.is_overdue %}card--overdue{% endif %}">
+        <div>
+          <span class="badge">{{ ticket.ticket_number }}</span>
+          <span class="badge badge--purple">{{ ticket.category.name }}</span>
+          <span class="badge">{{ ticket.priority.name }}</span>
+          <span class="badge">{{ ticket.status.name }}</span>
+          {% if ticket.is_overdue %}
+            <span class="badge badge--red">Просрочено</span>
+          {% endif %}
+        </div>
+
+        <h1 class="pre-text">{{ ticket.title }}</h1>
+        <p>Заявитель: <strong>{{ ticket.author.get_full_name|default:ticket.author.username }}</strong> | Срок: <strong>{{ ticket.deadline|date:"d.m.Y H:i" }}</strong></p>
+        <p class="pre-text">{{ ticket.description }}</p>
+
+        {% if attachments %}
+          <div>
+            <strong>Прикрепленные файлы (нажмите, чтобы скачать):</strong>
+            {% for att in attachments %}
+              <div>
+                <a href="{{ att.file.url }}" class="table__link" download>{{ att.original_name }}</a>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </article>
+
+      <!-- Чат по обращению -->
+      <article class="card">
+        <h2>Чат по обращению</h2>
+
+        <div class="pre-text">
+          {% for msg in chat_messages %}
+            <div class="chat__msg {% if msg.sender.role != 'requester' %}chat__msg--staff{% endif %}">
+              <strong>{{ msg.sender.get_full_name|default:msg.sender.username }}</strong> ({{ msg.created_at|date:"d.m.Y H:i" }}):
+              <p>{{ msg.text }}</p>
+            </div>
+          {% empty %}
+            <p>Сообщений пока нет.</p>
+          {% endfor %}
+        </div>
+
+        <form method="post" class="chat__form">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="send_message">
+          {{ message_form.text }}
+          <button type="submit" class="btn btn--purple">Отправить</button>
+        </form>
+        {% if message_form.text.errors %}<div class="form__error">{{ message_form.text.errors.0 }}</div>{% endif %}
+      </article>
+    </div>
+
+    <!-- Боковая панель управления -->
+    <aside class="card">
+      <h2>Управление</h2>
+      <p class="pre-text">Исполнитель: <strong>{{ ticket.assignee.get_full_name|default:"Не назначен" }}</strong></p>
+
+      {% if user.role != 'requester' %}
+        <form method="post" class="form">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="manage_ticket">
+
+          <div class="form__group">
+            <label class="form__label">Статус</label>
+            {{ manage_form.status }}
+          </div>
+
+          <div class="form__group">
+            <label class="form__label">Исполнитель</label>
+            {{ manage_form.assignee }}
+            {% if manage_form.assignee.errors %}<div class="form__error">{{ manage_form.assignee.errors.0 }}</div>{% endif %}
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--full">Сохранить</button>
+        </form>
+      {% else %}
+        <p>Статус заявки обновляется специалистом поддержки.</p>
+      {% endif %}
+    </aside>
+  </div>
+</section>
+{% endblock %}

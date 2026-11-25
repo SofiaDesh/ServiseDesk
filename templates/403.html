@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}403 Доступ запрещен — Service Desk{% endblock %}
+
+{% block content %}
+<section class="card card--center text-center">
+  <img src="{% static 'img/guard-robot.svg' %}" alt="Доступ запрещен" width="110" height="100" loading="lazy">
+  <h1>403 — Доступ запрещен</h1>
+  <p class="pre-text">У вас нет прав для просмотра этой страницы или обращения другого пользователя.</p>
+  <div class="filters">
+    <a href="{% url 'support:ticket_list' %}" class="btn btn--primary">На главную (к обращениям)</a>
+    <a href="{% url 'support:kb_list' %}" class="btn btn--outline">Поиск в Базе знаний</a>
+  </div>
+</section>
+{% endblock %}

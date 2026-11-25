@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Отчет руководителя — Service Desk{% endblock %}
+
+{% block content %}
+<section>
+  <div class="page-top">
+    <h1 class="page-top__title">Отчет по просроченным обращениям</h1>
+    <a href="{% url 'support:report_csv' %}" class="btn btn--purple">Скачать CSV</a>
+  </div>
+
+  <div class="kpi-grid">
+    <article class="card">
+      <div>Всего обращений</div>
+      <div class="kpi-value">{{ total }}</div>
+    </article>
+    <article class="card">
+      <div>Выполнено в срок</div>
+      <div class="kpi-value">{{ in_time }}</div>
+    </article>
+    <article class="card">
+      <div>Просрочено</div>
+      <div class="kpi-value">{{ overdue }}</div>
+    </article>
+    <article class="card card--overdue">
+      <div>Доля просроченных</div>
+      <div class="kpi-value">{{ overdue_percent|floatformat:1 }}%</div>
+    </article>
+  </div>
+
+  <table class="table">
+    <thead class="table__head">
+      <tr>
+        <th class="table__th">Категория</th>
+        <th class="table__th">Всего</th>
+        <th class="table__th">В срок</th>
+        <th class="table__th">Просрочено</th>
+        <th class="table__th">Доля просрочки</th>
+      </tr>
+    </thead>
+    <tbody class="table__body">
+      {% for row in by_category %}
+        <tr class="table__row {% if row.overdue > 0 %}table__row--overdue{% endif %}">
+          <td class="table__cell"><strong>{{ row.name }}</strong></td>
+          <td class="table__cell">{{ row.total }}</td>
+          <td class="table__cell">{{ row.in_time }}</td>
+          <td class="table__cell">{{ row.overdue }}</td>
+          <td class="table__cell">{{ row.percent|floatformat:1 }}%</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

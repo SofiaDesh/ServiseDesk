@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}База знаний — Service Desk{% endblock %}
+
+{% block content %}
+<section>
+  <div class="page-top">
+    <h1 class="page-top__title">База знаний</h1>
+    {% if user.role != 'requester' %}
+      <a href="{% url 'support:kb_create' %}" class="btn btn--purple">+ Добавить статью</a>
+    {% endif %}
+  </div>
+
+  <form method="get" class="filters">
+    <div class="filters__item">
+      <input type="text" name="q" value="{{ q }}" class="form__input" placeholder="Поиск статьи...">
+    </div>
+    <button type="submit" class="btn btn--primary">Найти</button>
+  </form>
+
+  <div class="filters">
+    <a href="{% url 'support:kb_list' %}" class="badge">Все</a>
+    {% for tag in tags %}
+      <a href="?tag={{ tag.name }}" class="badge badge--purple">#{{ tag.name }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="grid-cards">
+    {% for article in articles %}
+      <article class="card">
+        <span class="badge badge--purple">{{ article.category.name }}</span>
+        <h2 class="pre-text">
+          <a href="{% url 'support:kb_detail' article.pk %}" class="table__link">{{ article.title }}</a>
+        </h2>
+        <p>{{ article.content|truncatechars:100 }}</p>
+        <div class="pre-text">
+          {% for tag in article.tags.all %}
+            <span class="badge">#{{ tag.name }}</span>
+          {% endfor %}
+        </div>
+      </article>
+    {% empty %}
+      <p>Статей пока нет.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

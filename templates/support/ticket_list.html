@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Обращения — Service Desk{% endblock %}
+
+{% block content %}
+<section>
+  <div class="page-top">
+    <div>
+      <h1 class="page-top__title">Обращения ({{ total_count }})</h1>
+      <p>Просрочено: <strong>{{ overdue_count }}</strong></p>
+    </div>
+    <a href="{% url 'support:ticket_create' %}" class="btn btn--primary">+ Новое обращение</a>
+  </div>
+
+  <form method="get" class="filters">
+    <div class="filters__item">
+      <input type="text" name="q" value="{{ q }}" class="form__input" placeholder="Поиск по номеру или теме">
+    </div>
+    <div class="filters__item">
+      <select name="status" class="form__select">
+        <option value="">Статус: Все</option>
+        {% for st in statuses %}
+          <option value="{{ st.id }}" {% if selected_status == st.id|stringformat:"s" %}selected{% endif %}>{{ st.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filters__item">
+      <select name="category" class="form__select">
+        <option value="">Категория: Все</option>
+        {% for cat in categories %}
+          <option value="{{ cat.id }}" {% if selected_category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filters__item">
+      <select name="priority" class="form__select">
+        <option value="">Приоритет: Все</option>
+        {% for pr in priorities %}
+          <option value="{{ pr.id }}" {% if selected_priority == pr.id|stringformat:"s" %}selected{% endif %}>{{ pr.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filters__item">
+      <select name="sort" class="form__select">
+        <option value="-created_at" {% if selected_sort == '-created_at' %}selected{% endif %}>Сначала новые</option>
+        <option value="deadline" {% if selected_sort == 'deadline' %}selected{% endif %}>По сроку</option>
+        <option value="-priority__level" {% if selected_sort == '-priority__level' %}selected{% endif %}>По приоритету</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn--purple">Найти</button>
+  </form>
+
+  <table class="table">
+    <thead class="table__head">
+      <tr>
+        <th class="table__th">Номер</th>
+        <th class="table__th">Тема</th>
+        <th class="table__th">Категория</th>
+        <th class="table__th">Приоритет</th>
+        <th class="table__th">Статус</th>
+        <th class="table__th">Крайний срок</th>
+      </tr>
+    </thead>
+    <tbody class="table__body">
+      {% for ticket in page_obj %}
+        <tr class="table__row {% if ticket.is_overdue %}table__row--overdue{% endif %}">
+          <td class="table__cell">
+            <a href="{% url 'support:ticket_detail' ticket.pk %}" class="table__link">{{ ticket.ticket_number }}</a>
+          </td>
+          <td class="table__cell">
+            <a href="{% url 'support:ticket_detail' ticket.pk %}" class="table__link">{{ ticket.title|truncatechars:60 }}</a>
+            {% if ticket.is_overdue %}
+              <span class="badge badge--red">Просрочено</span>
+            {% endif %}
+          </td>
+          <td class="table__cell"><span class="badge badge--purple">{{ ticket.category.name }}</span></td>
+          <td class="table__cell"><span class="badge">{{ ticket.priority.name }}</span></td>
+          <td class="table__cell">{{ ticket.status.name }}</td>
+          <td class="table__cell">{{ ticket.deadline|date:"d.m.Y H:i" }}</td>
+        </tr>
+      {% empty %}
+        <tr class="table__row">
+          <td class="table__cell" colspan="6">Обращений пока нет.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if page_obj.paginator.num_pages > 1 %}
+    <div class="page-top pre-text">
+      <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+      <div>
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}&q={{ q }}&status={{ selected_status }}&category={{ selected_category }}&priority={{ selected_priority }}&sort={{ selected_sort }}" class="btn btn--outline">Назад</a>
+        {% endif %}
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}&q={{ q }}&status={{ selected_status }}&category={{ selected_category }}&priority={{ selected_priority }}&sort={{ selected_sort }}" class="btn btn--primary">Вперед</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Новое обращение — Service Desk{% endblock %}
+
+{% block content %}
+<section class="card card--center">
+  <a href="{% url 'support:ticket_list' %}" class="back-link">&larr; Назад к списку</a>
+  <h1>Новое обращение</h1>
+
+  <form method="post" enctype="multipart/form-data" class="form">
+    {% csrf_token %}
+
+    <div class="form__group">
+      <label class="form__label">Тема обращения *</label>
+      {{ form.title }}
+      {% if form.title.errors %}<div class="form__error">{{ form.title.errors.0 }}</div>{% endif %}
+    </div>
+
+    <div class="form__group">
+      <label class="form__label">Категория *</label>
+      {{ form.category }}
+    </div>
+
+    <div class="form__group">
+      <label class="form__label">Приоритет (влияет на срок SLA) *</label>
+      {{ form.priority }}
+    </div>
+
+    <div class="form__group">
+      <label class="form__label">Описание проблемы *</label>
+      {{ form.description }}
+      {% if form.description.errors %}<div class="form__error">{{ form.description.errors.0 }}</div>{% endif %}
+    </div>
+
+    <div class="form__group">
+      <label class="form__label">Прикрепить файл (до 5 МБ)</label>
+      {{ form.attachment }}
+      {% if form.attachment.errors %}<div class="form__error">{{ form.attachment.errors.0 }}</div>{% endif %}
+    </div>
+
+    <button type="submit" class="btn btn--primary btn--full">Отправить обращение</button>
+  </form>
+</section>
+{% endblock %}

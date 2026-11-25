@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Service Desk{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+  <header class="header">
+    <div class="container header__inner">
+      <a href="{% url 'support:ticket_list' %}" class="header__logo">
+        <img src="{% static 'img/logo.svg' %}" alt="Логотип Service Desk" width="36" height="36">
+        <span>Service Desk</span>
+      </a>
+
+      {% if user.is_authenticated %}
+        <input type="checkbox" id="menu-toggle" class="header__toggle">
+        <label for="menu-toggle" class="header__burger">Меню</label>
+
+        <nav class="header__nav">
+          <a href="{% url 'support:ticket_list' %}" class="header__link {% if request.resolver_match.url_name == 'ticket_list' %}header__link--active{% endif %}">Обращения</a>
+          <a href="{% url 'support:kb_list' %}" class="header__link {% if 'kb' in request.resolver_match.url_name %}header__link--active{% endif %}">База знаний</a>
+          {% if user.role == 'manager' %}
+            <a href="{% url 'support:report' %}" class="header__link {% if request.resolver_match.url_name == 'report' %}header__link--active{% endif %}">Отчеты</a>
+          {% endif %}
+          <a href="{% url 'support:faq' %}" class="header__link {% if request.resolver_match.url_name == 'faq' %}header__link--active{% endif %}">FAQ</a>
+          <a href="{% url 'support:profile' %}" class="header__link {% if request.resolver_match.url_name == 'profile' %}header__link--active{% endif %}">Профиль</a>
+
+          <div class="header__user">
+            <span>{{ user.username }} ({{ user.get_role_display }})</span>
+            <a href="{% url 'support:logout' %}" class="btn btn--danger">Выйти</a>
+          </div>
+        </nav>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      {% for message in messages %}
+        <div class="alert">{{ message }}</div>
+      {% endfor %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Регистрация — Service Desk{% endblock %}
+
+{% block content %}
+<section class="card card--center">
+  <h1>Регистрация</h1>
+
+  <form method="post" class="form">
+    {% csrf_token %}
+    <div class="form__group">
+      <label class="form__label">Имя *</label>
+      {{ form.first_name }}
+      {% if form.first_name.errors %}<div class="form__error">{{ form.first_name.errors.0 }}</div>{% endif %}
+    </div>
+    <div class="form__group">
+      <label class="form__label">Фамилия *</label>
+      {{ form.last_name }}
+      {% if form.last_name.errors %}<div class="form__error">{{ form.last_name.errors.0 }}</div>{% endif %}
+    </div>
+    <div class="form__group">
+      <label class="form__label">Логин *</label>
+      {{ form.username }}
+      {% if form.username.errors %}<div class="form__error">{{ form.username.errors.0 }}</div>{% endif %}
+    </div>
+    <div class="form__group">
+      <label class="form__label">Email *</label>
+      {{ form.email }}
+      {% if form.email.errors %}<div class="form__error">{{ form.email.errors.0 }}</div>{% endif %}
+    </div>
+    <div class="form__group">
+      <label class="form__label">Отдел</label>
+      {{ form.department }}
+    </div>
+    <div class="form__group">
+      <label class="form__label">Пароль *</label>
+      {{ form.password }}
+      {% if form.password.errors %}<div class="form__error">{{ form.password.errors.0 }}</div>{% endif %}
+    </div>
+    <div class="form__group">
+      <label class="form__label">Повтор пароля *</label>
+      {{ form.password_confirm }}
+      {% if form.password_confirm.errors %}<div class="form__error">{{ form.password_confirm.errors.0 }}</div>{% endif %}
+    </div>
+
+    <button type="submit" class="btn btn--purple btn--full">Создать аккаунт</button>
+  </form>
+
+  <p class="pre-text text-center">
+    Уже есть аккаунт? <a href="{% url 'support:login' %}" class="table__link">Войти</a>
+  </p>
+</section>
+{% endblock %}

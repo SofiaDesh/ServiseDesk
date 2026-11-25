@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Вход — Service Desk{% endblock %}
+
+{% block content %}
+<section class="card card--center">
+  <div class="text-center">
+    <img src="{% static 'img/support-cat.svg' %}" alt="ИТ-поддержка" width="110" height="96">
+    <h1>Вход в Service Desk</h1>
+  </div>
+
+  <form method="post" class="form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="alert alert--error">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="form__group">
+      <label class="form__label">Логин</label>
+      {{ form.username }}
+    </div>
+
+    <div class="form__group">
+      <label class="form__label">Пароль</label>
+      {{ form.password }}
+    </div>
+
+    <button type="submit" class="btn btn--primary btn--full">Войти</button>
+  </form>
+
+  <p class="pre-text text-center">
+    Нет аккаунта? <a href="{% url 'support:register' %}" class="table__link">Зарегистрироваться</a>
+  </p>
+</section>
+{% endblock %}

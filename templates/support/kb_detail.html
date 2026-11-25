@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }} — База знаний{% endblock %}
+
+{% block content %}
+<section class="card card--center">
+  <a href="{% url 'support:kb_list' %}" class="back-link">&larr; Все статьи</a>
+
+  <div>
+    <span class="badge badge--purple">{{ article.category.name }}</span>
+    {% for tag in article.tags.all %}
+      <span class="badge">#{{ tag.name }}</span>
+    {% endfor %}
+  </div>
+
+  <h1 class="pre-text">{{ article.title }}</h1>
+  <p>Обновлено: {{ article.updated_at|date:"d.m.Y" }}</p>
+  <p class="pre-text">{{ article.content }}</p>
+
+  {% if user.role != 'requester' %}
+    <a href="{% url 'support:kb_edit' article.pk %}" class="btn btn--outline">Редактировать статью</a>
+  {% endif %}
+</section>
+{% endblock %}

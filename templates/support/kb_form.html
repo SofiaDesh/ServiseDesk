@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Статья Базы знаний — Service Desk{% endblock %}
+
+{% block content %}
+<section class="card card--center">
+  <a href="{% url 'support:kb_list' %}" class="back-link">&larr; Назад в Базу знаний</a>
+  <h1>{% if is_edit %}Редактировать статью{% else %}Новая статья{% endif %}</h1>
+
+  <form method="post" class="form">
+    {% csrf_token %}
+    <div class="form__group">
+      <label class="form__label">Заголовок *</label>
+      {{ form.title }}
+      {% if form.title.errors %}<div class="form__error">{{ form.title.errors.0 }}</div>{% endif %}
+    </div>
+    <div class="form__group">
+      <label class="form__label">Категория *</label>
+      {{ form.category }}
+    </div>
+    <div class="form__group">
+      <label class="form__label">Теги (через запятую)</label>
+      {{ form.tags_text }}
+    </div>
+    <div class="form__group">
+      <label class="form__label">Текст инструкции *</label>
+      {{ form.content }}
+      {% if form.content.errors %}<div class="form__error">{{ form.content.errors.0 }}</div>{% endif %}
+    </div>
+    <button type="submit" class="btn btn--purple btn--full">Сохранить</button>
+  </form>
+</section>
+{% endblock %}

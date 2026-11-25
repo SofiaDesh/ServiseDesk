@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль — Service Desk{% endblock %}
+
+{% block content %}
+<section class="card card--center">
+  <span class="badge badge--purple">{{ user.get_role_display }}</span>
+  <h1 class="pre-text">{{ user.username }}</h1>
+  <p>Создано обращений: <strong>{{ my_tickets_count }}</strong></p>
+
+  <form method="post" class="form pre-text">
+    {% csrf_token %}
+    <div class="form__group">
+      <label class="form__label">Имя</label>
+      {{ form.first_name }}
+    </div>
+    <div class="form__group">
+      <label class="form__label">Фамилия</label>
+      {{ form.last_name }}
+    </div>
+    <div class="form__group">
+      <label class="form__label">Email</label>
+      {{ form.email }}
+    </div>
+    <div class="form__group">
+      <label class="form__label">Отдел</label>
+      {{ form.department }}
+    </div>
+    <button type="submit" class="btn btn--primary btn--full">Сохранить</button>
+  </form>
+</section>
+{% endblock %}

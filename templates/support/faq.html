@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}FAQ — Service Desk{% endblock %}
+
+{% block content %}
+<section class="card card--center">
+  <h1>Частые вопросы (FAQ)</h1>
+
+  <div class="pre-text">
+    <h2>1. Сроки решения заявок (SLA)</h2>
+    {% for pr in priorities %}
+      <p><strong>{{ pr.name }}:</strong> до {{ pr.sla_hours }} ч.</p>
+    {% endfor %}
+  </div>
+
+  <div class="pre-text">
+    <h2>2. Ограничение на файлы</h2>
+    <p>Максимальный размер файла — 5 МБ (PNG, JPG, PDF, DOCX, ZIP, TXT).</p>
+  </div>
+
+  <div class="pre-text">
+    <h2>3. Доступ к заявкам</h2>
+    <p>Заявитель видит только свои заявки. При попытке открыть чужую заявку по ссылке срабатывает защита 403.</p>
+  </div>
+</section>
+{% endblock %}
